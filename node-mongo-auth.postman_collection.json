@@ -1,0 +1,60 @@
+{
+	"info": {
+		"_postman_id": "2d3a34a1-c2b0-484d-95fb-1995811671b7",
+		"name": "node-mongo-auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Amit\",\"email\":\"email@email\",\"password\":\"password\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/auth/signup"
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Amit\",\"email\":\"email@email\",\"password\":\"password\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "crud/list/user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authtoken",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjgzN2Y5OGZkMjZmYjk1MjYyNWY4ZmQiLCJuYW1lIjoiQW1pdCIsImVtYWlsIjoiZW1haWxAZW1haWwiLCJvcmdhbml6YXRpb25faWQiOiI2MjgzN2U4ZTYyZWEyNDQ5MGIyNzVkNTYiLCJvcmdhbml6YXRpb24iOiI2MjgzN2U4ZTYyZWEyNDQ5MGIyNzVkNTYiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjUyNzg1MTA0LCJleHAiOjE2NTI4NDUxMDR9.4u-GsvHR3WpTsSHLuEUXkxXtrrVEr33R3hrjW8ztfGc",
+						"type": "text"
+					}
+				],
+				"url": "localhost:3000/crud/list/user"
+			},
+			"response": []
+		}
+	]
+}
