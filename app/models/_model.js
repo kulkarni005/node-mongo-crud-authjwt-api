@@ -3,14 +3,14 @@
 var mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
-const AutoPopulate=require("mongoose-autopopulate");
-const versioning = require('mongoose-versioned')
+const AutoPopulate = require("mongoose-autopopulate");
+const versioning = require("mongoose-versioned");
 
 var commonModelAttributes = { created_by: { type: mongoose.Schema.Types.ObjectId, ref: "user" }, updated_by: { type: mongoose.Schema.Types.ObjectId, ref: "user" }, organization: { type: mongoose.Schema.Types.ObjectId, ref: "organization" } };
 
-setup_plugins_and_export_module = (SchemaName,Schema) => {
-  //console.log(SchemaName+' PluginSetup');  
-  SchemaName=SchemaName.toLowerCase();
+setup_plugins_and_export_module = (SchemaName, Schema) => {
+  //console.log(SchemaName+' PluginSetup');
+  SchemaName = SchemaName.toLowerCase();
 
   //Supports Pagination
   Schema.plugin(mongoosePaginate);
@@ -22,7 +22,11 @@ setup_plugins_and_export_module = (SchemaName,Schema) => {
   Schema.plugin(AutoPopulate);
 
   //Version Backups
-  Schema.plugin(versioning, {collection: '_backupversions_'+SchemaName, mongoose})
+  if (process.env.BACKUPVERSIONS_ENABLE == "TRUE") {
+    if(!process.env.BACKUPVERSIONS_EXCLUDEMODELS.includes(SchemaName)){  
+    Schema.plugin(versioning, { collection: process.env.BACKUPVERSIONS_PREFIX + SchemaName, mongoose });
+    }
+  }
 
   return mongoose.model(SchemaName, Schema);
 };
