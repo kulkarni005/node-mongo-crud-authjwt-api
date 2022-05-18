@@ -32,7 +32,7 @@ app.options("*", cors());
 require("./other/cron");
 
 // Import routes
-require("./api-routes")(app);
+require("./routes")(app);
 
 //Connect Database
 mongoose
