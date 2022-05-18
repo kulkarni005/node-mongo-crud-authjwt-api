@@ -4,6 +4,7 @@ var mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 const AutoPopulate=require("mongoose-autopopulate");
+const versioning = require('mongoose-versioned')
 
 var commonModelAttributes = { created_by: { type: mongoose.Schema.Types.ObjectId, ref: "user" }, updated_by: { type: mongoose.Schema.Types.ObjectId, ref: "user" }, organization: { type: mongoose.Schema.Types.ObjectId, ref: "organization" } };
 
@@ -19,6 +20,9 @@ setup_plugins_and_export_module = (SchemaName,Schema) => {
 
   //AutoPopulate Certain Fields
   Schema.plugin(AutoPopulate);
+
+  //Version Backups
+  Schema.plugin(versioning, {collection: '_backupversions_'+SchemaName, mongoose})
 
   return mongoose.model(SchemaName, Schema);
 };

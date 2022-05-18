@@ -10,7 +10,7 @@ exports.get_unsecure_olist = async (req, res) => {
   return helperModule.responseHandler(res, data);
 };
 
-//Secured API 
+//Secured API
 exports.list = async (req, res) => {
   if (!_controllerModule.Model[req.params.model]) {
     return helperModule.responseHandler(res, { params: req.params }, "error", req.params.model + " Model Not Found");
@@ -20,17 +20,14 @@ exports.list = async (req, res) => {
 };
 
 exports.post_addedit = async (req, res) => {
-
   if (!_controllerModule.Model[req.params.model]) {
     return helperModule.responseHandler(res, { params: req.params }, "error", req.params.model + " Model Not Found");
   }
 
- 
+  var update = {};
 
-  var update = {}; 
-
-  if(req.authtokenuser){
-    update.organization= req.authtokenuser.organization;
+  if (req.authtokenuser) {
+    update.organization = req.authtokenuser.organization;
   }
 
   //Filterout Fields - Only Update fields available in schema and data exists in post
@@ -40,26 +37,25 @@ exports.post_addedit = async (req, res) => {
     }
   });
 
-  let action='create';
-  if(req.body._id){
-    action='update';
+  let action = "create";
+  if (req.body._id) {
+    action = "update";
   }
   let obj;
   // console.log(req.params.model,_controllerModule.Model[req.params.model],action,update);
-  try{
-  switch(action){
+  try {
+    switch (action) {
+      case "create":
+        obj = await _controllerModule.Model[req.params.model].create(update);
+        break;
 
-    case 'create':
-    obj = await  _controllerModule.Model[req.params.model].create(update);
-    break;
-
-    case 'update':
-    obj = await  _controllerModule.Model[req.params.model].update({_id:req.body._id},update);
-    break; 
+      case "update":
+        obj = await _controllerModule.Model[req.params.model].findOneAndUpdate({ _id: req.body._id }, update);
+        break;
+    }
+  } catch (e) {
+    return helperModule.responseHandler(res, { params: req.params }, "error", e.message);
   }
-}catch(e){
-  return helperModule.responseHandler(res, { params: req.params }, "error", e.message);
-}
 
- return helperModule.responseHandler(res, obj);
+  return helperModule.responseHandler(res, obj);
 };
