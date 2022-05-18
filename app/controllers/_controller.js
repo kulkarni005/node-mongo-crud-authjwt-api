@@ -6,7 +6,7 @@ var Model={};
 require("fs")
   .readdirSync(normalizedPath)
   .forEach(function (file) {
-    if(!file.includes('_model')){
+    if(!file.startsWith("_")){
     console.log(file);
     let mname= file.split('.')[0];
     Model[mname] = require("../models/" + file); 

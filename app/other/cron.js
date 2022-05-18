@@ -4,10 +4,10 @@ var cron = require("node-cron");
 cron.schedule(
   "15,30,55,0 * * * *",
   () => {
-    console.log("Running a job at 15,30,45,0 at Asia/Kolkata timezone");
+    console.log("Running a job at 15,30,45,0 at "+process.env.TIMEZONE+" timezone");
   },
   {
     scheduled: true,
-    timezone: "Asia/Kolkata",
+    timezone: process.env.TIMEZONE,
   }
 );

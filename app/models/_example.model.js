@@ -1,16 +1,19 @@
+//This is example model - copy pasta this model and name your schema, remove _ from name and Voila CRUD is ready !
+
+
 //Importing Common _model functions
 var _modelModule = require(require("path").join(__dirname, "_model"));
 
 // Setup schema
-var SchemaName = "organization"; 
+var SchemaName = "example"; 
 
 //Schema Definition
 var Schema = _modelModule.mongoose.Schema(
   {
     name: { type: String, required: true },
-    alias: { type: String },
-    email: { type: String, index: { unique: true, sparse: true } },
-    is_active: { type: Boolean, default: true },
+    description: { type: String},
+
+    ..._modelModule.commonModelAttributes 
   },
   { timestamps: true }
 );

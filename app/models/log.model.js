@@ -2,15 +2,17 @@
 var _modelModule = require(require("path").join(__dirname, "_model"));
 
 // Setup schema
-var SchemaName = "organization"; 
+var SchemaName = "log"; 
 
 //Schema Definition
 var Schema = _modelModule.mongoose.Schema(
   {
-    name: { type: String, required: true },
-    alias: { type: String },
-    email: { type: String, index: { unique: true, sparse: true } },
-    is_active: { type: Boolean, default: true },
+    category: {type: String,default:'default'},
+    action: {type: String, required: true}, 
+    model_name: {type: String},
+    model_id: {type: String},
+    data:{},
+    ..._modelModule.commonModelAttributes
   },
   { timestamps: true }
 );

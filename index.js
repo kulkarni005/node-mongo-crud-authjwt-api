@@ -22,7 +22,7 @@ app.use(xss());
 app.use(mongoSanitize());
 
 //Setting Timezone
-process.env.TZ = "Asia/Kolkata";
+process.env.TZ = process.env.TIMEZONE;
 
 // enable cors
 app.use(cors());
