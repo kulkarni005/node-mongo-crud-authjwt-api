@@ -1,5 +1,4 @@
-const jwt = require("jsonwebtoken");
-var mongoose = require("mongoose");
+const jwt = require("jsonwebtoken"); 
 
 //Auth Token Check
 verifyAuthToken = (req, res, next) => {
@@ -26,33 +25,18 @@ modelFormatter = (req, res, next) => {
 
   //For AddEdit POST
   if (req.method == "POST") {
-    //fixupsertnullidissue
-    if (!req.body._id) {
-      req.body._id = mongoose.Types.ObjectId();
+
+    if (!req.body.created_by) {
+      req.body.created_by = req.authtokenuser._id;
     }
-    if (!req.body.createdBy) {
-      req.body.createdBy = req.authtokenuser._id;
-    }
-    req.body.updatedBy = req.authtokenuser._id;
+    req.body.updated_by = req.authtokenuser._id;
 
     //global exclusion list for addedit
     req.modelfieldsexclusionlist = ["createdAt", "updatedAt", "_v"];
     req.modelfieldsexclusionlist.forEach((entry) => {
       delete req.body[entry];
     });
-
-    req.presetquery.body = {
-      _id: req.body._id,
-      organization: req.authtokenuser.organization_id,
-    };
-
-    req.presetquery.options = {
-      upsert: true,
-      new: true,
-      runValidators: true,
-      setDefaultsOnInsert: true,
-      useFindAndModify: false,
-    };
+ 
   }
 
   //For GET LIST
@@ -60,10 +44,7 @@ modelFormatter = (req, res, next) => {
     req.presetquery.query = {};
     if (req.authtokenuser) {
       req.presetquery.query = { organization: req.authtokenuser.organization_id };
-    }
-    if (req.query._id) {
-      req.presetquery.query._id = req.query._id;
-    }
+    } 
   }
   next();
 };
@@ -71,19 +52,14 @@ modelFormatter = (req, res, next) => {
 //Pagination Middleware
 pagination = (req, res, next) => {
   if (!req.query.limit) {
-    req.query.limit = 10;
+    req.query.limit = process.env.PAGINATION_LIMIT;
   }
 
   if (!req.query.page) {
     req.query.page = 1;
-  }
+  } 
 
-  const myCustomLabels = {
-    totalDocs: "count",
-    docs: "data",
-  };
-
-  req.query.pagination_options = { page: req.query.page, limit: req.query.limit, customLabels: myCustomLabels };
+req.query.pagination_options = { page: req.query.page, limit: req.query.limit};
   next();
 };
 
