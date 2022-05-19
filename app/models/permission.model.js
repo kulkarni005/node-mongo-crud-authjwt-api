@@ -1,11 +1,8 @@
-//Importing Common _model functions
-var _modelModule = require(require("path").join(__dirname, "_model"));
-
 // Setup schema
 var SchemaName = "permission"; 
 
 //Schema Definition
-var Schema = _modelModule.mongoose.Schema(
+var Schema = mongoose.Schema(
   {
     name: { type: String, required: true },
     description: { type: String},
@@ -13,10 +10,10 @@ var Schema = _modelModule.mongoose.Schema(
     name: { type: String, required: true },
     alias: { type: String, required: true },
     is_active : {type:Boolean,default:true},
-    ..._modelModule.commonModelAttributes
+    ..._COMMONMODELATTRIBUTES
   },
   { timestamps: true }
 );
 
 // Setup Plugins and Export module
-module.exports = _modelModule.setup_plugins_and_export_module(SchemaName,Schema);
+module.exports = _HELPERFUNCTION.setup_plugins_and_export_module(SchemaName,Schema);

@@ -6,33 +6,39 @@ const mongoose = require("mongoose");
 const mongoSanitize = require("express-mongo-sanitize");
 
 //Use LODASH for lot and lots of frequently ready to use JS Functions
-global._ = require("lodash");
-
+global._ = require("lodash"); 
 //Read Config form .env File
-require("dotenv").config();
-
+require("dotenv").config(); 
 // Initialize the app
-let app = express();
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(helmet());
+global.APP = express();
+APP.use(express.urlencoded({ extended: true }));
+APP.use(express.json());
+APP.use(helmet());
 
 // sanitize request data
-app.use(xss());
-app.use(mongoSanitize());
+APP.use(xss());
+APP.use(mongoSanitize());
 
 //Setting Timezone
 process.env.TZ = process.env.TIMEZONE;
 
 // enable cors
-app.use(cors());
-app.options("*", cors());
+APP.use(cors());
+APP.options("*", cors());
+
+//import Globals
+require("./_core/_init");
 
 //Scheduled Jobs - CRON
 require("./other/cron");
 
-// Import routes
-require("./routes")(app);
+//Enable CORS
+APP.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Headers", "authtoken, Origin, Content-Type, Accept");
+  next();
+});
+
+ 
 
 //Connect Database
 mongoose
@@ -50,6 +56,6 @@ mongoose
 var port = process.env.PORT || 3000;
 
 // Launch app to listen to specified port
-app.listen(port, function () {
+APP.listen(port, function () {
   console.log("Running Api on port " + port);
 });
