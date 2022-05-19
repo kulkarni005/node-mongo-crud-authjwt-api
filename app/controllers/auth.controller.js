@@ -1,30 +1,21 @@
-const https = require("https");
-var mongoose = require("mongoose");
-var jwt = require("jsonwebtoken");
+const https = require("https"); 
 var bcrypt = require("bcryptjs");
-
-const UserModel = require("../models/user.model");
-const OrganizationModel = require("../models/organization.model");
-const RoleModel = require("../models/role.model");
-const PermissionModel = require("../models/permission.model");
-
-var helperModule = require(require("path").join(__dirname, "../other/helper"));
 
 //login via email
 exports.post_unsecure_login = async (req, res) => {
-  let user = await UserModel.findOne({ email: req.body.email });
+  let user = await _MODEL['user'].findOne({ email: req.body.email });
 
   if (!user) {
-    return helperModule.responseHandler(res, {}, "error", "User Account not Found");
+    return _HELPERFUNCTION.responseHandler(res, {}, "error", "User Account not Found");
   }
 
   bcrypt.compare(req.body.password, user.password, function (err, result) {
     // result == true
     if (err) {
-      return helperModule.responseHandler(res, {}, "error", err);
+      return _HELPERFUNCTION.responseHandler(res, {}, "error", err);
     }
     if (!result) {
-      return helperModule.responseHandler(res, {}, "error", "Invalid Password");
+      return _HELPERFUNCTION.responseHandler(res, {}, "error", "Invalid Password");
     }
     return _generateAccessToken(res, user);
   });
@@ -36,29 +27,29 @@ exports.post_unsecure_signup = async (req, res) => {
   //console.log(initdata);
   if (req.body.name && req.body.email && req.body.password) {
     //Avoid Duplicate EmailId
-    let nuser = await UserModel.findOne({
+    let nuser = await _MODEL['user'].findOne({
       email: req.body.email,
       organization: initdata.organization,
     });
 
     if (nuser) {
-      return helperModule.responseHandler(res, {}, "error", "Account with Email Already Exists");
+      return _HELPERFUNCTION.responseHandler(res, {}, "error", "Account with Email Already Exists");
     }
 
     //Proceed to User Creation
     req.body.password = bcrypt.hashSync(req.body.password, 8);
-    let newuser = new UserModel({ name: req.body.name, email: req.body.email, password: req.body.password, organization: initdata.organization,role:initdata.role});
+    let newuser = new _MODEL['user']({ name: req.body.name, email: req.body.email, password: req.body.password, organization: initdata.organization,role:initdata.role});
     await newuser.save();
     return _generateAccessToken(res, newuser);
   } else {
-    return helperModule.responseHandler(res, {}, "error", "Specify All Fields");
+    return _HELPERFUNCTION.responseHandler(res, {}, "error", "Specify All Fields");
   }
 };
 
 //Fetch User Object And GenerateAccessToken
 _generateAccessToken = async (res, useri) => {
   //console.log(user);
-  let user = await UserModel.findOne({ _id: useri._id });
+  let user = await _MODEL['user'].findOne({ _id: useri._id });
   if (!user.is_active) {
     return res.status(401).send({ message: "Account Inactive, Please Contact Support", user: user });
   }
@@ -70,7 +61,7 @@ _generateAccessToken = async (res, useri) => {
 
   let data = user.toJSON();
   data.token = token;
-  return helperModule.responseHandler(res, data);
+  return _HELPERFUNCTION.responseHandler(res, data);
 };
 
 //initialize Database
@@ -78,25 +69,25 @@ _generateAccessToken = async (res, useri) => {
 _init = async (req, res) => {
   let initdata = {};
 
-  let organizations = await OrganizationModel.find();
+  let organizations = await _MODEL['organization'].find();
 
   if (organizations.length > 0) {
     initdata.organization = organizations[0];
   } else {
     //Create Organization
-    let organization = await OrganizationModel.create({ name: "DEFAULT", alias: "default" });
+    let organization = await _MODEL['organization'].create({ name: "DEFAULT", alias: "default" });
     initdata.organization = organization;
   }
 
-  let roles = await RoleModel.find();
+  let roles = await _MODEL['role'].find();
 
   if (roles.length > 0) {
     initdata.role = roles[0];
   } else {
     //Create Permission
-    let permission = await PermissionModel.create({ name: "DEFAULT",category: "DEFAULT", alias: "default" });
+    let permission = await _MODEL['permission'].create({ name: "DEFAULT",category: "DEFAULT", alias: "default" });
     //Create Role
-    let role = await RoleModel.create({ name: "DEFAULT", permissions: [permission] });
+    let role = await _MODEL['role'].create({ name: "DEFAULT", permissions: [permission] });
     initdata.role = role;
   }
   return initdata;

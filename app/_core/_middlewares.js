@@ -1,7 +1,5 @@
-const jwt = require("jsonwebtoken"); 
-
 //Auth Token Check
-verifyAuthToken = (req, res, next) => {
+_MIDDLEWARE.verifyAuthToken = (req, res, next) => {
   let token = req.headers["authtoken"];
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
@@ -20,12 +18,11 @@ verifyAuthToken = (req, res, next) => {
 
 //modelFormatter
 
-modelFormatter = (req, res, next) => {
+_MIDDLEWARE.modelFormatter = (req, res, next) => {
   req.presetquery = {};
 
   //For AddEdit POST
   if (req.method == "POST") {
-
     if (!req.body.created_by) {
       req.body.created_by = req.authtokenuser._id;
     }
@@ -36,7 +33,6 @@ modelFormatter = (req, res, next) => {
     req.modelfieldsexclusionlist.forEach((entry) => {
       delete req.body[entry];
     });
- 
   }
 
   //For GET LIST
@@ -44,29 +40,21 @@ modelFormatter = (req, res, next) => {
     req.presetquery.query = {};
     if (req.authtokenuser) {
       req.presetquery.query = { organization: req.authtokenuser.organization_id };
-    } 
+    }
   }
   next();
 };
 
 //Pagination Middleware
-pagination = (req, res, next) => {
+_MIDDLEWARE.pagination = (req, res, next) => {
   if (!req.query.limit) {
     req.query.limit = process.env.PAGINATION_LIMIT;
   }
 
   if (!req.query.page) {
     req.query.page = 1;
-  } 
+  }
 
-req.query.pagination_options = { page: req.query.page, limit: req.query.limit};
+  req.query.pagination_options = { page: req.query.page, limit: req.query.limit };
   next();
 };
-
-const MiddlewareModule = {
-  verifyAuthToken,
-  pagination,
-  modelFormatter,
-};
-
-module.exports = MiddlewareModule;

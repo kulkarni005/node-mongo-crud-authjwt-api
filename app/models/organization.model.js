@@ -1,11 +1,8 @@
-//Importing Common _model functions
-var _modelModule = require(require("path").join(__dirname, "_model"));
-
 // Setup schema
 var SchemaName = "organization"; 
 
 //Schema Definition
-var Schema = _modelModule.mongoose.Schema(
+var Schema = mongoose.Schema(
   {
     name: { type: String, required: true },
     alias: { type: String },
@@ -16,4 +13,4 @@ var Schema = _modelModule.mongoose.Schema(
 );
 
 // Setup Plugins and Export module
-module.exports = _modelModule.setup_plugins_and_export_module(SchemaName,Schema);
+module.exports = _HELPERFUNCTION.setup_plugins_and_export_module(SchemaName,Schema);
